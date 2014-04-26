@@ -50,6 +50,11 @@ public class ComputeESS {
 				ArrayList<Double> MrepectVariableFactorStyle = M.get(i);
 				
 				Factor factor = factors.get(i);
+				
+				if(om.isCollision(factor.getNodeVariable())) {
+					continue;
+				}
+				
 				ArrayList<Integer> order = null;
 				ArrayList<ArrayList<Factor>> clusters = null;
 				// for each pair of instantiation of xi and ui
@@ -59,31 +64,32 @@ public class ComputeESS {
 					
 					// if the x and u collide with o evidence, 
 					// I must not setSoftEvidence and return 0 immediately
-					if(om.isCollision(factor.variables, values)) {
-						// make the function run 2^m completion, where m is the number of missing varaibles
-						continue;
-					}
+//					if(om.isCollision(factor.variables, values)) {
+//						// make the function run 2^m completion, where m is the number of missing varaibles
+//						continue;
+//					}
 					
 					// soft order and cluster should be computed before
 					// the evidence already set
 					// if not collide, then running 
 					model.setSoftEvidence(factor.variables, values, false);
 					// must computer soft order before this execution
-					if(null == order) {
-						order = model.computeSoftOrder();
-						clusters = model.generateSoftClusters(order);
-					}	
-					long funStart = System.currentTimeMillis();	
-					double result = model.softBucketElimination(order, clusters);
+//					if(null == order) {
+//						order = model.computeSoftOrder();
+//						clusters = model.generateSoftClusters(order);
+//					}	
+					//long funStart = System.currentTimeMillis();	
+					//double result = model.softBucketElimination(order, clusters);
+					double result = model.probabilityEvidence();
 					double prev = MrepectVariableFactorStyle.get(j);
-					System.out.println(System.currentTimeMillis() - funStart);
+					//System.out.println(System.currentTimeMillis() - funStart);
 					
 					MrepectVariableFactorStyle.set(j, prev + result / PrOm);
 				}
 			}
 			eIndex++;
 			long endTime = System.currentTimeMillis();
-			System.out.println("RT " + eIndex + ": " + (endTime - startTime));
+			//System.out.println("RT " + eIndex + ": " + (endTime - startTime));
 		}
 	}
 	
